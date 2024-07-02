@@ -72,6 +72,7 @@ class Bird(pg.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = xy
         self.speed = 10
+        
 
     def change_img(self, num: int, screen: pg.Surface):
         """
@@ -89,13 +90,16 @@ class Bird(pg.sprite.Sprite):
         引数2 screen：画面Surface
         """
         sum_mv = [0, 0]
+        current_speed = self.speed #current_speedにデフォルトのスピードを入れる
+        if key_lst[pg.K_LSHIFT]: #シフト押したらスピード20にする
+            current_speed = 20
         for k, mv in __class__.delta.items():
             if key_lst[k]:
                 sum_mv[0] += mv[0]
                 sum_mv[1] += mv[1]
-        self.rect.move_ip(self.speed*sum_mv[0], self.speed*sum_mv[1])
+        self.rect.move_ip(current_speed*sum_mv[0], current_speed*sum_mv[1])
         if check_bound(self.rect) != (True, True):
-            self.rect.move_ip(-self.speed*sum_mv[0], -self.speed*sum_mv[1])
+            self.rect.move_ip(-current_speed*sum_mv[0], -current_speed*sum_mv[1])
         if not (sum_mv[0] == 0 and sum_mv[1] == 0):
             self.dire = tuple(sum_mv)
             self.image = self.imgs[self.dire]
@@ -263,6 +267,8 @@ def main():
                 return 0
             if event.type == pg.KEYDOWN and event.key == pg.K_SPACE:
                 beams.add(Beam(bird))
+            
+            
         screen.blit(bg_img, [0, 0])
 
         if tmr%200 == 0:  # 200フレームに1回，敵機を出現させる
